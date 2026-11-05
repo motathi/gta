@@ -54,7 +54,43 @@ def parse_args():
     ap.add_argument("--frames", default="", help="'a:b' (intervalo) ou lista 'f1,f2,...'; vazio = todos")
     ap.add_argument("--paint", default="0.55,0.02,0.02", help="cor da pintura do carro (RGB linear)")
     ap.add_argument("--overwrite", action="store_true")
+    ap.add_argument("--engine", choices=("cycles", "eevee"), default="cycles",
+                    help="cycles = path tracing (mais fiel); eevee = tempo real na GPU (bem mais rapido)")
+    ap.add_argument("--device", choices=("CPU", "GPU"), default="CPU", help="GPU so vale para o Cycles")
     return ap.parse_args(argv)
+
+
+def setup_engine(sc, args):
+    if args.engine == "eevee":
+        names = [i.identifier for i in bpy.types.RenderSettings.bl_rna.properties["engine"].enum_items]
+        sc.render.engine = next(n for n in ("BLENDER_EEVEE_NEXT", "BLENDER_EEVEE") if n in names)  # 4.2-4.5 / 5.x
+        for attr, val in (("taa_render_samples", args.samples), ("use_raytracing", True), ("use_shadows", True)):
+            try:
+                setattr(sc.eevee, attr, val)
+            except (AttributeError, TypeError):
+                pass
+        print("motor:", sc.render.engine)
+        return
+    sc.render.engine = "CYCLES"
+    sc.cycles.device = "CPU"
+    if args.device == "GPU":
+        prefs = bpy.context.preferences.addons["cycles"].preferences
+        for backend in ("OPTIX", "CUDA", "HIP", "METAL", "ONEAPI"):
+            try:
+                prefs.compute_device_type = backend
+                prefs.refresh_devices() if hasattr(prefs, "refresh_devices") else prefs.get_devices()
+            except (TypeError, ValueError, RuntimeError):
+                continue
+            gpus = [d for d in prefs.devices if d.type != "CPU"]
+            if gpus:
+                for d in prefs.devices:
+                    d.use = d.type != "CPU"
+                sc.cycles.device = "GPU"
+                print("Cycles GPU (%s): %s" % (backend, ", ".join(d.name for d in gpus)))
+                return
+        print("AVISO: nenhuma GPU encontrada para o Cycles; usando CPU")
+    else:
+        print("Cycles CPU")
 
 
 def find_asset(root, name):
@@ -516,8 +552,7 @@ def main():
     w, h = (int(x) for x in args.res.lower().split("x"))
     sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = w, h, 100
     sc.render.fps = args.fps
-    sc.render.engine = "CYCLES"
-    sc.cycles.device = "CPU"
+    setup_engine(sc, args)
     sc.cycles.samples = args.samples
     sc.cycles.use_denoising = True
     sc.cycles.max_bounces = 4

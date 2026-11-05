@@ -20,6 +20,15 @@ python tools/sa_extract.py "C:\Program Files (x86)\Steam\steamapps\common\Grand 
 # 2) renderiza e monta o vídeo -> out/video.mp4   (retoma de onde parou se for interrompido)
 python render/make_video.py --assets assets --out out/video.mp4
 ```
+**Com placa de vídeo (recomendado, minutos em vez de ~1 h):**
+```bash
+# Cycles na GPU (OptiX/CUDA/HIP/Metal detectados automaticamente), mais amostras e resolução maior
+python render/make_video.py --assets assets --out out/video.mp4 --device GPU --samples 32 --res 1280x720
+# ou Eevee (tempo real, o mais rápido; visual um pouco menos fiel)
+python render/make_video.py --assets assets --out out/video.mp4 --engine eevee --res 1920x1080 --final-res 1920x1080
+```
+Se o Blender não for achado sozinho: `--blender "C:\Program Files\Blender Foundation\Blender 4.5\blender.exe"`.
+
 Útil: `python render/ifp_anp3.py assets/anim/ped.ifp` lista as animações do IFP; `tools/sa_extract.py --list <nome>`
 procura arquivos dentro dos `.img`. Qualquer pasta com os arquivos serve em `--assets` (a busca é recursiva por nome).
 

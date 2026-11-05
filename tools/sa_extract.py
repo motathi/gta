@@ -28,7 +28,8 @@ SECTOR = 2048
 IMG_PATHS = ["models/gta3.img", "models/player.img", "models/gta_int.img", "anim/anim.img"]
 
 # nomes de modelo (sem extensao). O que nao existir no seu jogo e apenas ignorado.
-PEDS = ["sweet", "ryder", "smoke", "cesar", "truth", "maccer",
+PROPS = ["lamppost1", "fire_hydrant", "trafficlight1"]  # usados por render/scene_video.py
+PEDS = ["wuzimu", "sweet", "ryder", "smoke", "cesar", "truth", "maccer",
         "fam1", "fam2", "fam3", "ballas1", "ballas2", "ballas3"]
 VEHICLES = ["infernus", "bullet", "cheetah", "banshee", "sultan", "elegy", "landstal",
             "greenwoo", "voodoo", "tornado", "savanna", "blade", "buccanee", "remingtn", "sabre"]
@@ -39,6 +40,7 @@ PRESET_STARTER = [
     ("player", PLAYER, ("dff", "txd")),
     ("peds", PEDS, ("dff", "txd")),
     ("vehicles", VEHICLES, ("dff", "txd")),
+    ("props", PROPS, ("dff", "txd")),
 ]
 # arquivos soltos (relativos a pasta do jogo) copiados inteiros
 LOOSE_STARTER = [("anim", "anim/ped.ifp"), ("generic", "models/generic")]

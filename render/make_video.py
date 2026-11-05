@@ -37,6 +37,8 @@ def main():
     ap.add_argument("--samples", type=int, default=10)
     ap.add_argument("--fps", type=int, default=24)
     ap.add_argument("--seconds", type=float, default=15.0)
+    ap.add_argument("--engine", choices=("cycles", "eevee"), default="cycles")
+    ap.add_argument("--device", choices=("CPU", "GPU"), default="CPU")
     ap.add_argument("--ped", default="wuzimu")
     ap.add_argument("--car", default="infernus")
     ap.add_argument("--frames-dir", default=None, help="padrao: <pasta do video>/frames")
@@ -54,7 +56,7 @@ def main():
         blender = find_blender(a.blender)
         cmd = [blender, "-b", "-P", os.path.join(HERE, "scene_video.py"), "--",
                "--assets", os.path.abspath(a.assets), "--out", frames, "--res", a.res, "--samples", str(a.samples),
-               "--fps", str(a.fps), "--ped", a.ped, "--car", a.car]
+               "--fps", str(a.fps), "--ped", a.ped, "--car", a.car, "--engine", a.engine, "--device", a.device]
         print("render:", " ".join(cmd))
         subprocess.run(cmd, check=True)  # retoma de onde parou: frames ja existentes sao pulados
 
