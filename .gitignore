@@ -1,0 +1,16 @@
+# Arquivos do jogo (Rockstar/Take-Two): NUNCA commitar em repositorio publico
+assets/
+assets_*.zip
+*.dff
+*.txd
+*.ifp
+*.img
+*.col
+*.ipl
+*.ide
+
+# Saidas de render e temporarios
+out/
+frames/
+*.blend1
+__pycache__/
