@@ -46,6 +46,7 @@ def main():
 
     out = os.path.abspath(a.out)
     frames = os.path.abspath(a.frames_dir or os.path.join(os.path.dirname(out), "frames"))
+    os.makedirs(os.path.dirname(out), exist_ok=True)  # a trilha e o MP4 vao para a pasta do video
     os.makedirs(frames, exist_ok=True)
     total = int(round(a.seconds * a.fps))
 
